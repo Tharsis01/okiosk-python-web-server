@@ -13,7 +13,12 @@ def create():
     order = params['order']
 
     a = main.nlp(order)
-    return jsonify({"answer": a})
+    if not a or a == 'false':
+        return jsonify({"answer": a, "OK": 'false'})
+    else:
+        return jsonify({"answer": a,
+                        "OK": 'true'})
+
     #1
     # 자연어처리
 

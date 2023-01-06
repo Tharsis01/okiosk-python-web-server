@@ -10,12 +10,12 @@ def nlp(example):
     ex = example.replace(" ","")
     word_tokens = Okt.morphs(ex)
 
-    result = [word for word in word_tokens if not word in stop_words]
+    resultf = [word for word in word_tokens if not word in stop_words]
 
-    result2 = ''.join(result)
+    result2 = ''.join(resultf)
     print(result2)
     nouns = mecab.nouns(result2)
-    print('명사 단위:',nouns)
+    print('명사 단위:', nouns)
 
     conn = pymysql.connect(host='127.0.0.1', user='root', password='8114', db='menuDB', charset='utf8')
     cur = conn.cursor()
@@ -30,9 +30,12 @@ def nlp(example):
                 with conn.cursor() as cur:
                     cur.execute(sql, (nouns[count]))
                     result = cur.fetchone()
-                    for data in result:
-                        final_result.insert(count, data)
-                        print(data)
+                    if result is None:
+                        return 'false'
+                    else:
+                        for data in result:
+                            final_result.insert(count, data)
+                            print(data)
 
         elif count % 2 == 1:
             sql = "SELECT NumCode FROM NumTable where Num = %s"
@@ -40,9 +43,12 @@ def nlp(example):
                 with conn.cursor() as cur:
                     cur.execute(sql, (nouns[count]))
                     result = cur.fetchone()
-                    for data in result:
-                        final_result.insert(count, data)
-                        print(data)
+                    if result is None:
+                        return 'false'
+                    else:
+                        for data in result:
+                            final_result.insert(count, data)
+                            print(data)
 
         count = count + 1
     final_result2 = ' '.join(final_result)
